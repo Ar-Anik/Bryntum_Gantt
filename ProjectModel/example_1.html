@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bryntum Scheduler Pro Example</title>
+    <!-- Assuming you have included Bryntum library. Make sure to use the correct path or CDN. -->
+    <link
+      rel="stylesheet"
+      href="https://bryntum.com/products/gantt/build/gantt.material.css"
+      data-bryntum-theme
+    />
+  </head>
+  <body>
+    <div id="scheduler-container"></div>
+
+    <script type="module">
+      import {
+        SchedulerPro,
+        ResourceModel,
+        EventModel,
+        EventStore,
+        ResourceStore,
+        ProjectModel,
+      } from "https://bryntum.com/products/schedulerpro/build/schedulerpro.module.js";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const scheduler = new SchedulerPro({
+          appendTo: "scheduler-container",
+          minHeight: "20em",
+          eventStyle: "colored",
+          features: {
+            filterBar: true,
+            timeRanges: true,
+            eventMenu: true,
+          },
+          columns: [
+            { type: "resourceInfo", text: "Staff", width: 150 },
+            { text: "Event", field: "name", width: 200 },
+            { text: "Start", field: "startDate", width: 150 },
+            { text: "End", field: "endDate", width: 150 },
+          ],
+          startDate: new Date(2023, 0, 1),
+          endDate: new Date(2023, 11, 31),
+        });
+
+        // Add resources and events to the Scheduler
+        const resource1 = scheduler.project.addResource({
+          id: 1,
+          name: "Resource 1",
+        });
+        const resource2 = scheduler.project.addResource({
+          id: 2,
+          name: "Resource 2",
+        });
+
+        const event1 = scheduler.project.addEvent({
+          id: 1,
+          resourceId: 1,
+          name: "Event 1",
+          startDate: new Date(2023, 0, 1, 8),
+          endDate: new Date(2023, 0, 1, 12),
+        });
+
+        const event2 = scheduler.project.addEvent({
+          id: 2,
+          resourceId: 2,
+          name: "Event 2",
+          startDate: new Date(2023, 0, 1, 14),
+          endDate: new Date(2023, 0, 1, 18),
+        });
+
+        // Render the Scheduler
+        scheduler.render();
+      });
+    </script>
+  </body>
+</html>

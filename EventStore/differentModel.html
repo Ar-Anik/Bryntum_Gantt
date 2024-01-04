@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://bryntum.com/products/gantt/build/gantt.material.css"
+      data-bryntum-theme
+    />
+    <script type="module">
+      import {
+        SchedulerPro,
+        ResourceModel,
+        EventModel,
+        EventStore,
+        ResourceStore,
+        ProjectModel,
+      } from "https://bryntum.com/products/schedulerpro/build/schedulerpro.module.js";
+
+      class CustomResourceModel extends ResourceModel {
+        static get fields() {
+          return ["id", "name"];
+        }
+      }
+
+      // Define a custom EventModel
+      class CustomEventModel extends EventModel {
+        static get fields() {
+          return ["id", "startDate", "endDate", "title", "resourceId"];
+        }
+      }
+
+      // Define a ProjectModel
+      class CustomProjectModel extends ProjectModel {
+        static get fields() {
+          return ["events", "resources", "assignments", "dependencies"];
+        }
+      }
+
+      // Create instances of custom models
+      const resourceStore = new ResourceStore({
+        modelClass: CustomResourceModel,
+        data: [
+          { id: "r1", name: "Resource 1" },
+          { id: "r2", name: "Resource 2" },
+        ],
+      });
+
+      const eventStore = new EventStore({
+        modelClass: CustomEventModel,
+        data: [
+          {
+            id: 1,
+            startDate: new Date(),
+            endDate: new Date(),
+            title: "Event 1",
+            resourceId: "r1",
+          },
+          {
+            id: 2,
+            startDate: new Date(),
+            endDate: new Date(),
+            title: "Event 2",
+            resourceId: "r2",
+          },
+        ],
+      });
+
+      const project = new CustomProjectModel({
+        events: eventStore,
+        resources: resourceStore,
+      });
+
+      const scheduler = new SchedulerPro({
+        appendTo: "container",
+        rowHeight: 50,
+        startDate: new Date(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+        resourceStore: resourceStore,
+        eventStore: eventStore,
+        project: project, // Connect the project to the scheduler
+      });
+
+      scheduler.render();
+    </script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+</html>

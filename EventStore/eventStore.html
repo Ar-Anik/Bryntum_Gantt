@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://bryntum.com/products/gantt/build/gantt.material.css"
+      data-bryntum-theme
+    />
+    <script type="module">
+      import {
+        SchedulerPro,
+        ResourceModel,
+        EventModel,
+        EventStore,
+      } from "https://bryntum.com/products/schedulerpro/build/schedulerpro.module.js";
+
+      class ExtendedEventStore extends EventStore {
+        static get defaultConfig() {
+          return {
+            modelClass: ExtendedEventModel,
+            autoCommit: true,
+            autoCommitTimeout: 500,
+            autoLoad: true,
+            groupers: ["location"],
+            listeners: {
+              update: "onStoreUpdate",
+            },
+          };
+        }
+
+        onStoreUpdate({ record, changes }) {
+          console.log(`Event with ID ${record.id} updated. Changes: `, changes);
+        }
+      }
+
+      class ExtendedEventModel extends EventModel {
+        static get fields() {
+          return [
+            "id",
+            "resourceId",
+            "startDate",
+            "endDate",
+            "title",
+            "location",
+            "description",
+            "color",
+            "priority",
+            "cls",
+            "iconCls",
+            "dragCls",
+            "resizable",
+            "eventStyle",
+            "eventRenderer",
+            "style",
+            "readOnly",
+            "editable",
+            "locked",
+            "meta",
+            "persist",
+            "showInTimeline",
+            "showInCalendar",
+            "showInGantt",
+            "contextMenu",
+            "customField1",
+            "customField2",
+          ];
+        }
+      }
+
+      const eventData = [
+        {
+          id: 1,
+          resourceId: "room-101",
+          startDate: new Date(2023, 0, 1, 10, 0),
+          endDate: new Date(2023, 0, 1, 12, 0),
+          title: "Meeting with Client",
+          location: "Conference Room 101",
+          description:
+            "Discuss project requirements and timelines. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          color: "blue",
+          priority: "high",
+          cls: "custom-class",
+          iconCls: "my-icon",
+          dragCls: "drag-indicator",
+          resizable: true,
+          eventStyle: "border-color: red; background-color: yellow;",
+          eventRenderer: "customEventRenderer",
+          style: "background-color: lightgreen;",
+          readOnly: false,
+          editable: true,
+          locked: false,
+          meta: { customMeta: "value" },
+          persist: true,
+          showInTimeline: true,
+          showInCalendar: true,
+          showInGantt: true,
+          contextMenu: ["Edit", "Delete"],
+          customField1: "Custom Value 1",
+          customField2: "Custom Value 2",
+        },
+        // Add more events with custom field values...
+      ];
+
+      const extendedEventStore = new ExtendedEventStore({
+        data: eventData,
+      });
+
+      const scheduler = new SchedulerPro({
+        appendTo: "container",
+        startDate: new Date(2023, 0, 1, 8),
+        endDate: new Date(2023, 0, 1, 18),
+        viewPreset: "hourAndDay",
+        rowHeight: 50,
+        resourceStore: {
+          data: [
+            { id: "room-101", name: "Conference Room 101" },
+            // Add more resources...
+          ],
+        },
+        eventStore: extendedEventStore,
+        columns: [
+          { text: "Event", field: "title", width: 200 },
+          { text: "Location", field: "location", width: 150 },
+          { text: "Start Date", field: "startDate", width: 150 },
+          { text: "End Date", field: "endDate", width: 150 },
+          { text: "Color", field: "color", width: 100 },
+          { text: "Priority", field: "priority", width: 100 },
+          { text: "Description", field: "description", width: 300 },
+          { text: "Custom Field 1", field: "customField1", width: 150 },
+          { text: "Custom Field 2", field: "customField2", width: 150 },
+        ],
+        features: {
+          group: "location",
+        },
+        listeners: {
+          beforeeventresize: function (event) {
+            console.log(`Resizing event with ID ${event.id}`);
+          },
+          // Add more listeners based on your needs...
+        },
+      });
+
+      scheduler.render();
+    </script>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+</html>
