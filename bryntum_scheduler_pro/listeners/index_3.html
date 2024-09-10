@@ -1,0 +1,92 @@
+########################### Not Work Listeners ############################## 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bryntum Scheduler Pro Example</title>
+    <link rel="stylesheet" href="https://bryntum.com/products/schedulerpro/build/schedulerpro.material.css" data-bryntum-theme>
+</head>
+<body>
+    <div id="scheduler" style="height: 400px;"></div>
+
+    <script type="module">
+        console.log("Script loaded");
+
+        import { SchedulerPro } from 'https://bryntum.com/products/schedulerpro/build/schedulerpro.module.js';
+
+        try {
+            const resources = [
+                { id: 1, name: 'Resource 1' },
+                { id: 2, name: 'Resource 2' }
+            ];
+
+            const events = [
+                { id: 1, resourceId: 1, startDate: '2024-08-01', endDate: '2024-08-08', name: 'Task 1' },
+                { id: 2, resourceId: 2, startDate: '2024-08-02', endDate: '2024-08-03', name: 'Task 2' }
+            ];
+
+            console.log("Before initializing scheduler");
+
+            const scheduler = new SchedulerPro({
+                appendTo: 'scheduler',
+                startDate: new Date(2024, 7, 1),
+                endDate: new Date(2024, 7, 10),
+                resources: resources,
+                events: events,
+                columns: [
+                    { text: 'Name', field: 'name', width: 150 }
+                ],
+                listeners: {
+                    // Listener for the `hasChanges` event
+                    hasChanges() {
+                        console.log('Changes detected in hasChanges listener.');
+                    }
+                }
+            });
+
+            console.log("Scheduler initialized");
+
+        function simulateChange() {
+            console.log("Simulating change");
+
+            const eventStore = scheduler.eventStore;
+
+            console.log("Before change:", eventStore.getById(1)); // Log the event before change
+
+            const event = eventStore.getById(1);
+            event.setStartDate(new Date(2024, 7, 5), true);
+
+            console.log("After change:", eventStore.getById(1)); // Log the event after change
+
+            // Listen for changes using the dataChange event
+            scheduler.eventStore.on('change', () => {
+                if (scheduler.project.hasChanges) {
+                    console.log('Changes detected in eventStore.');
+                    console.log('Changes:', scheduler.project.changes);
+                } else {
+                    console.log(scheduler.project.changes.events.updated[0]);
+                    console.log('No changes detected in eventStore.');
+                }
+            });
+
+            // Trigger an explicit commit to see if changes are detected
+            scheduler.project.commitAsync().then(() => {
+                console.log('Changes committed. Checking again...');
+                if (scheduler.project.hasChanges) {
+                    console.log('Changes detected after commit:', scheduler.project.changes);
+                } else {
+                    console.log('No changes detected after commit.');
+                }
+            });
+        }
+
+        setTimeout(simulateChange, 5000);
+
+    } catch (error) {
+        console.error("Error initializing scheduler:", error);
+    }
+    </script>
+</body>
+</html>

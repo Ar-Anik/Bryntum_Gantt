@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://bryntum.com/products/schedulerpro/build/schedulerpro.material.css" data-bryntum-theme>
+        <title>SchedulerPro Example ViewPreset</title>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="module">
+            import * as Module from 'https://bryntum.com/products/schedulerpro/build/schedulerpro.module.js';
+            Object.assign(window, Module);
+
+            const scheduler = new SchedulerPro({
+                project: {
+                    loadUrl: 'https://run.mocky.io/v3/b13b81fe-0b0c-41f5-a062-a7adea5a8af1',
+                    autoLoad: true
+                },
+
+                appendTo : 'container',
+
+                width: '100%',
+                height: 1000,
+                rowHeight: 100,
+
+                startDate: '2023-04-16',
+                endDate: '2023-05-25',
+
+                viewPreset : {
+                    base: 'hourAndDay', // Base it on an existing preset
+
+                    headers : [ // Configure the headers (top and bottom rows)
+                        {
+                            unit       : 'day',
+                            dateFormat : 'DD MMM YYYY'
+                        },
+                        {
+                            unit       : 'hour',
+                            increment  : 2,
+                            dateFormat : 'HH:mm'
+                        }
+                    ]
+                },
+
+                columns: [
+                    { text: 'Name', field: 'name', width: 160 },
+                    { text: 'Role', field: 'role', width: 150 }
+                ]
+            })
+        </script>
+    </body>
+</html>

@@ -1,0 +1,78 @@
+// ################################### not work listeners ###########################################
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bryntum Scheduler Pro Example</title>
+    <!-- Include the Bryntum Scheduler Pro CSS -->
+    <link rel="stylesheet" href="https://bryntum.com/products/schedulerpro/build/schedulerpro.material.css" data-bryntum-theme>
+</head>
+<body>
+    <div id="scheduler" style="height: 400px;"></div>
+
+    <script type="module">
+        import { SchedulerPro } from 'https://bryntum.com/products/schedulerpro/build/schedulerpro.module.js';
+
+        // Sample data for tasks and resources
+        const resources = [
+            { id: 1, name: 'Resource 1' },
+            { id: 2, name: 'Resource 2' },
+            { id: 3, name: 'Resource 3' },
+        ];
+
+        // const events = [
+        //     { id: 1, resourceId: 1, startDate: '2024-08-01', endDate: '2024-08-10', name: 'Task 1' },
+        //     { id: 2, resourceId: 2, startDate: '2024-08-12', endDate: '2024-08-23', name: 'Task 2' }
+        // ];
+
+        const events = [
+            {id: 1, resourceId: 1, startDate: '2024-08-01', endDate: '2024-08-10', name: 'Task-1'},
+            {id: 2, resourceId: 2, startDate: '2024-08-12', endDate: '2024-08-23', name: 'Task-2'},
+            {id: 3, resourceId: 3, startDate: '2024-08-20', endDate: '2024-08-30', name: 'Task-3'},
+        ]
+
+        // Initialize Scheduler Pro
+        const scheduler = new SchedulerPro({
+            appendTo: 'scheduler',
+
+            startDate: new Date(2024, 7, 1),
+            endDate: new Date(2024, 8, 10),
+
+            resources: resources,
+            events: events,
+
+            columns: [
+                { text: 'Name', field: 'name', width: 150 }
+            ],
+
+            listeners: {
+                // Listener for the `hasChanges` event
+                hasChanges() {
+                    console.log('Changes detected');  // Simplify to check if it logs
+                    console.log(scheduler.project.changes);  // Verify this separately
+                }
+
+                // load: async function () {
+                //     console.log(scheduler.project.changes);
+                // }
+            }
+        });
+
+        // Example function to simulate a change to the project
+        function simulateChange() {
+            console.log(scheduler.eventStore);
+            console.log(scheduler.eventListeners);
+            const eventStore = scheduler.eventStore;
+
+            // Modify an event to trigger the hasChanges event
+            const event = eventStore.getById(1);
+            event.setStartDate(new Date(2024, 7, 2), true);
+        }
+
+        // Simulate a change after 2 seconds
+        setTimeout(simulateChange, 5000);
+    </script>
+</body>
+</html>
